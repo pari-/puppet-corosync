@@ -1,0 +1,38 @@
+#
+# this file is managed by puppet!
+#
+# Please read the corosync.conf.5 manual page
+compatibility: whitetank
+
+totem {
+        version: <%= scope.lookupvar('corosync::config::version') %>
+        secauth: <%= scope.lookupvar('corosync::config::secauth') %>
+        interface {
+<% scope.lookupvar('corosync::config::member_array').each do |member_ip| -%>
+		member {
+			memberaddr: <%= member_ip %>
+		}
+<% end -%>
+                ringnumber: <%= scope.lookupvar('corosync::config::ringnumber') %>
+                bindnetaddr: <%= scope.lookupvar('corosync::config::bindnetaddr') %>
+                mcastport: <%= scope.lookupvar('corosync::config::mcastport') %>
+                ttl: <%= scope.lookupvar('corosync::config::ttl') %>
+        }
+        transport: <%= scope.lookupvar('corosync::config::transport') %>
+}
+
+logging {
+        fileline: <%= scope.lookupvar('corosync::config::fileline') %>
+        to_logfile: <%= scope.lookupvar('corosync::config::to_logfile') %>
+        to_syslog: <%= scope.lookupvar('corosync::config::to_syslog') %>
+        logfile: <%= scope.lookupvar('corosync::config::logfile') %>
+        debug: <%= scope.lookupvar('corosync::config::global_debug') %>
+        timestamp: <%= scope.lookupvar('corosync::config::timestamp') %>
+<% scope.lookupvar('corosync::config::logger_subsys_hash').each do |logger_subsys_key,logger_subsys_value| -%>
+        logger_subsys {
+                subsys: <%= logger_subsys_value['name'] %>
+                debug: <%= logger_subsys_value['debug'] %>
+        }
+<% end -%>
+}
+
